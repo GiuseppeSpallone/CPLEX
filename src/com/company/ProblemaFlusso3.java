@@ -1,98 +1,103 @@
 package com.company;
 
+import com.company.Grafo.Arco;
+import com.company.Grafo.Controller;
+import com.company.Grafo.Nodo;
 import ilog.concert.IloLinearNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 
 public class ProblemaFlusso3 {
 
     public static void main(String[] args) {
-        int numNodi = 2 + (int) (Math.random() * 100);
-        int numArchi = 1 + (int) (Math.random() * ((numNodi * (numNodi - 1)) / 2));
-        int from = 0;
-        int to = 0;
-        int costo = 0;
-        int from_grafo = 0;
-        int to_grafo = 0;
+        Controller controller = new Controller();
 
-        System.out.println("NUMERO NODI: " + numNodi);
-        System.out.println("NUMERO ARCHI: " + numArchi);
+       /** RANDOM **/
+        /*int numNodi = controller.randomNum(2, 10);
+        int max = ((numNodi * (numNodi - 1)) / 2);
+        int numArchi = controller.randomNum(1, max);
+        HashMap<Integer, Nodo> nodi = controller.creaNodiRandom(numNodi);
+        HashSet<Arco> archi = controller.creaArchi(numArchi, nodi);*/
 
-        ArrayList<int[]> grafo = new ArrayList<>();
-        for (int i = 0; i < numArchi; i++) {
+        /** SCANNER **/
+        /*HashMap<Integer, Nodo> nodi = controller.creaNodi();
+        HashSet<Arco> archi = controller.creaArchi(nodi);*/
 
-            from = 1 + (int) (Math.random() * numNodi);
-            to = 1 + (int) (Math.random() * numNodi);
-            costo = 1 + (int) (Math.random() * 25);
+        HashMap<Integer, Nodo> nodi = new HashMap<>();
+        Nodo nodo1 = new Nodo(1, 5);
+        Nodo nodo2 = new Nodo(2, -4);
+        Nodo nodo3 = new Nodo(3, 0);
+        Nodo nodo4 = new Nodo(4, 2);
+        Nodo nodo5 = new Nodo(5, -3);
+        nodi.put(nodo1.getId(), nodo1);
+        nodi.put(nodo2.getId(), nodo2);
+        nodi.put(nodo3.getId(), nodo3);
+        nodi.put(nodo4.getId(), nodo4);
+        nodi.put(nodo5.getId(), nodo5);
 
-            grafo.add(new int[]{from, to, costo});
+        HashSet<Arco> archi = new HashSet<>();
+        Arco arco1 = new Arco(nodo1, nodo2, 6);
+        Arco arco2 = new Arco(nodo1, nodo3, 1);
+        Arco arco3 = new Arco(nodo2, nodo5, 4);
+        Arco arco4 = new Arco(nodo3, nodo4, 2);
+        Arco arco5 = new Arco(nodo3, nodo2, 3);
+        Arco arco6 = new Arco(nodo4, nodo1, 4);
+        Arco arco7 = new Arco(nodo4, nodo2, 1);
+        Arco arco8 = new Arco(nodo4, nodo5, 3);
+        archi.add(arco1);
+        archi.add(arco2);
+        archi.add(arco3);
+        archi.add(arco4);
+        archi.add(arco5);
+        archi.add(arco6);
+        archi.add(arco7);
+        archi.add(arco8);
 
-            do {
+        flussoCostoMinimo(nodi, archi);
 
-                for (int j = 0; j < grafo.size(); j++) {
-                    from_grafo = grafo.get(j)[0];
-                    to_grafo = grafo.get(j)[1];
-
-                }
-            } while (from != from_grafo && to != to_grafo);
-
-
-        }
-
-        ArrayList<Integer> nodi = new ArrayList<>();
-        for (int i = 0; i < numNodi; i++) {
-            //controllo somma uguale a 0
-            int valore = -25 + (int) (Math.random() * 25);
-            nodi.add(valore);
-        }
-
-        for (int i = 0; i < grafo.size(); i++) {
-            System.out.println("Arco num " + (i + 1) + ": " + grafo.get(i)[0] + " " + grafo.get(i)[1] + " " + grafo.get(i)[2]);
-        }
-
-        for (int i = 0; i < nodi.size(); i++) {
-            System.out.println("Nodo num " + (i + 1) + ": " + nodi.get(i));
-        }
-
-        double min = flussoCostoMinimo(grafo, nodi);
     }
 
-    public static double flussoCostoMinimo(ArrayList<int[]> grafo, ArrayList<Integer> nodi) {
+
+    public static double flussoCostoMinimo(HashMap<Integer, Nodo> nodi, HashSet<Arco> archi) {
 
         try {
 
             IloCplex model = new IloCplex();
 
             /**insieme di variabili**/
-            IloNumVar[] variabili = model.numVarArray(grafo.size(), 0, Double.MAX_VALUE);
-
+            IloNumVar[] variabili = model.numVarArray(archi.size(), 0, Double.MAX_VALUE);
 
             /**funzione obiettivo**/
             IloLinearNumExpr function = model.linearNumExpr();
 
-            for (int i = 0; i < variabili.length; i++) {
-                function.addTerm(variabili[i], grafo.get(i)[2]);
+            int i = 0;
+            for (Iterator<Arco> it = archi.iterator(); it.hasNext(); ) {
+                Arco arco = it.next();
+                function.addTerm(variabili[i], arco.getCosto());
+                i++;
             }
             model.addMinimize(function);
 
-
-            /**vincoli**/
-            for (int i = 0; i < nodi.size(); i++) {
+            int j = 0;
+            for (Iterator<Nodo> it = nodi.values().iterator(); it.hasNext(); ) {
+                Nodo nodo = it.next();
                 IloLinearNumExpr v = model.linearNumExpr();
 
-                for (int j = 0; j < grafo.size(); j++) {
-                    if (grafo.get(j)[0] == i + 1) {
-                        v.addTerm(variabili[j], 1);
-                    }
-                    if (grafo.get(j)[1] == i + 1) {
-                        v.addTerm(variabili[j], -1);
-                    }
-                }
+                int k = 0;
+                for (Iterator<Arco> it1 = archi.iterator(); it1.hasNext(); ) {
+                    Arco arco = it1.next();
 
-                model.addEq(v, nodi.get(i), "v");
+                    if (arco.getNodo_from() == nodo)
+                        v.addTerm(variabili[k], 1);
+                    if (arco.getNodo_to() == nodo)
+                        v.addTerm(variabili[k], -1);
+
+                    k++;
+                }
+                model.addEq(v, nodo.getValore(), "vincolo nodo " + nodo.getId());
+                j++;
             }
             model.exportModel("problemaFlusso3.lp");
 
@@ -100,6 +105,11 @@ public class ProblemaFlusso3 {
             if (model.solve()) {
                 System.out.println("Solution status: " + model.getStatus());
                 System.out.println("Solution value: " + model.getObjValue());
+
+                for (int v = 0; v < variabili.length; v++) {
+                    System.out.println("x" + (v + 1) + " value: " + model.getValue(variabili[v]));
+                }
+
             } else {
                 System.out.println("Solution status: " + model.getStatus());
             }
@@ -112,5 +122,7 @@ public class ProblemaFlusso3 {
         return 0;
     }
 
+
 }
+
 

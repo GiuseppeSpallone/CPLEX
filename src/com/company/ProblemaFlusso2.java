@@ -65,6 +65,11 @@ public class ProblemaFlusso2 {
             if (model.solve()) {
                 System.out.println("Solution status: " + model.getStatus());
                 System.out.println("Solution value: " + model.getObjValue());
+
+                for(int v = 0; v<variabili.length; v++){
+                    System.out.println("x" + (v+1) + " value: " + model.getValue(variabili[v]));
+                }
+
             } else {
                 System.out.println("Solution status: " + model.getStatus());
             }
