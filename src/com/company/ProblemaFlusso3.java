@@ -15,17 +15,17 @@ public class ProblemaFlusso3 {
         Controller controller = new Controller();
 
        /** RANDOM **/
-        /*int numNodi = controller.randomNum(2, 10);
+        int numNodi = controller.randomNum(2, 15);
         int max = ((numNodi * (numNodi - 1)) / 2);
         int numArchi = controller.randomNum(1, max);
         HashMap<Integer, Nodo> nodi = controller.creaNodiRandom(numNodi);
-        HashSet<Arco> archi = controller.creaArchi(numArchi, nodi);*/
+        HashSet<Arco> archi = controller.creaArchiRandom(numArchi, nodi);
 
         /** SCANNER **/
         /*HashMap<Integer, Nodo> nodi = controller.creaNodi();
         HashSet<Arco> archi = controller.creaArchi(nodi);*/
 
-        HashMap<Integer, Nodo> nodi = new HashMap<>();
+        /*HashMap<Integer, Nodo> nodi = new HashMap<>();
         Nodo nodo1 = new Nodo(1, 5);
         Nodo nodo2 = new Nodo(2, -4);
         Nodo nodo3 = new Nodo(3, 0);
@@ -53,7 +53,7 @@ public class ProblemaFlusso3 {
         archi.add(arco5);
         archi.add(arco6);
         archi.add(arco7);
-        archi.add(arco8);
+        archi.add(arco8);*/
 
         flussoCostoMinimo(nodi, archi);
 

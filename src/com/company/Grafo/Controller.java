@@ -87,7 +87,7 @@ public class Controller {
         return nodi;
     }
 
-    public HashSet<Arco> creaArchi(int randomNumArchi, HashMap<Integer, Nodo> nodi) {
+    public HashSet<Arco> creaArchiRandom(int randomNumArchi, HashMap<Integer, Nodo> nodi) {
         HashSet<Arco> archi = new HashSet<>();
 
         for (int i = 0; i < randomNumArchi; i++) {
