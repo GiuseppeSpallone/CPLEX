@@ -1,16 +1,12 @@
-package com.company;
+package Esempio;
 
 import ilog.concert.IloLinearNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
-public class Modello1 {
+public class Modello {
 
-    public static void main(String[] args) {
-        modello();
-    }
-
-    public static void modello() {
+    public static void run() {
 
         try {
             IloCplex model = new IloCplex();
@@ -54,6 +50,7 @@ public class Modello1 {
                 System.out.println("Solution status: " + model.getStatus());
             }
 
+            model.end();
 
         } catch (Exception e) {
             e.printStackTrace();

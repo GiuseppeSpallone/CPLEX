@@ -1,14 +1,13 @@
-package com.company.Grafo;
+package Grafo;
 
 public class Arco {
-    private Nodo nodo_from;
-    private Nodo nodo_to;
-    private int costo;
+    public Nodo nodo_from;
+    public Nodo nodo_to;
+    public int costo;
 
-    public Arco(Nodo nodo_from, Nodo nodo_to, int costo) {
+    public Arco(Nodo nodo_from, Nodo nodo_to) {
         this.nodo_from = nodo_from;
         this.nodo_to = nodo_to;
-        this.costo = costo;
     }
 
     public Nodo getNodo_from() {
